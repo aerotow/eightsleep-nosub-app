@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiR } from "~/trpc/react";
 import TimezoneSelect, { allTimezones } from "react-timezone-select";
+import { Button } from "./ui/button";
 
 const temperatureProfileSchema = z.object({
   bedTime: z.string().regex(/^\d{2}:\d{2}$/, "Must be in HH:MM format"),
@@ -24,6 +25,7 @@ type TemperatureProfileForm = z.infer<typeof temperatureProfileSchema>;
 
 export const TemperatureProfileForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isExistingProfile, setIsExistingProfile] = useState(false);
 
   const {
     register,
@@ -31,6 +33,7 @@ export const TemperatureProfileForm: React.FC = () => {
     control,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<TemperatureProfileForm>({
     resolver: zodResolver(temperatureProfileSchema),
@@ -64,9 +67,11 @@ export const TemperatureProfileForm: React.FC = () => {
       setValue("midStageSleepLevel", profile.midStageSleepLevel / 10);
       setValue("finalSleepLevel", profile.finalSleepLevel / 10);
       setValue("timezone", { value: profile.timezoneTZ, label: profile.timezoneTZ });
+      setIsExistingProfile(true);
       setIsLoading(false);
     } else if (getUserTemperatureProfileQuery.isError) {
-      console.error("Failed to fetch temperature profile. Try logging in again.", getUserTemperatureProfileQuery.error);
+      console.error("Failed to fetch temperature profile. Using default values.", getUserTemperatureProfileQuery.error);
+      setIsExistingProfile(false);
       setIsLoading(false);
     }
   }, [getUserTemperatureProfileQuery.isSuccess, getUserTemperatureProfileQuery.isError, getUserTemperatureProfileQuery.data, setValue, getUserTemperatureProfileQuery.error]);
@@ -107,6 +112,19 @@ export const TemperatureProfileForm: React.FC = () => {
       },
     });
 
+  const deleteProfileMutation =
+    apiR.user.deleteUserTemperatureProfile.useMutation({
+      onSuccess: () => {
+        console.log("Temperature profile deleted successfully");
+        setIsExistingProfile(false);
+        reset(); // Reset form to default values
+      },
+      onError: (error) => {
+        console.error("Failed to delete temperature profile:", error.message);
+        // Handle error (e.g., show error message)
+      },
+    });
+
   const onSubmit = (data: TemperatureProfileForm) => {
     const formatTimeForAPI = (time: string) => `${time}:00.000000`;
 
@@ -122,6 +140,12 @@ export const TemperatureProfileForm: React.FC = () => {
     console.log('Data being sent to server:', mutationData);
 
     updateProfileMutation.mutate(mutationData);
+  };
+
+  const onDelete = () => {
+    if (window.confirm("Are you sure you want to delete your temperature profile?")) {
+      deleteProfileMutation.mutate();
+    }
   };
 
   const SliderInput: React.FC<{
@@ -166,7 +190,7 @@ export const TemperatureProfileForm: React.FC = () => {
   return (
     <div className="mx-auto mt-8 max-w-md rounded-lg bg-white p-6 shadow-xl">
       <h2 className="mb-4 text-center text-2xl font-bold text-gray-800">
-        Update Temperature Profile
+        {isExistingProfile ? "Update" : "Create"} Temperature Profile
       </h2>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -267,17 +291,35 @@ export const TemperatureProfileForm: React.FC = () => {
           info={`Starts at ${sleepInfo.finalStageTime}`}
         />
 
-        <button
-          type="submit"
-          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          disabled={updateProfileMutation.isPending}
-        >
-          {updateProfileMutation.isPending ? "Updating..." : "Update Profile"}
-        </button>
+        <div className="flex justify-between">
+          <Button
+            type="submit"
+            className="flex-grow rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            disabled={updateProfileMutation.isPending}
+          >
+            {updateProfileMutation.isPending ? "Updating..." : (isExistingProfile ? "Update" : "Create") + " Profile"}
+          </Button>
+          {isExistingProfile && (
+            <Button
+              type="button"
+              onClick={onDelete}
+              className="ml-4 rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              disabled={deleteProfileMutation.isPending}
+            >
+              {deleteProfileMutation.isPending ? "Deleting..." : "Delete Schedule"}
+            </Button>
+          )}
+        </div>
         {updateProfileMutation.isError && (
           <p className="mt-4 text-center text-sm text-red-600">
-            Error updating profile. Try logging in again.
+            Error updating profile. Please try again.
             {updateProfileMutation.error.message}
+          </p>
+        )}
+        {deleteProfileMutation.isError && (
+          <p className="mt-4 text-center text-sm text-red-600">
+            Error deleting profile. Please try again.
+            {deleteProfileMutation.error.message}
           </p>
         )}
       </form>

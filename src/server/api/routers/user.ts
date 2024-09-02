@@ -126,13 +126,9 @@ export const userRouter = createTRPCRouter({
           throw new Error("JWT_SECRET is not defined in the environment");
         }
 
-        const token = jwt.sign(
-          { email: input.email },
-          jwtSecret,
-          {
-            expiresIn: "90d",
-          },
-        );
+        const token = jwt.sign({ email: input.email }, jwtSecret, {
+          expiresIn: "90d",
+        });
         const threeMonthsInSeconds = 90 * 24 * 60 * 60; // 90 days
 
         cookies().set("8slpAutht", token, {
@@ -265,6 +261,41 @@ export const userRouter = createTRPCRouter({
         });
       }
     }),
+
+  deleteUserTemperatureProfile: publicProcedure.mutation(async ({ ctx }) => {
+    try {
+      const decoded = await checkAuthCookie(ctx.headers);
+      const email = decoded.email;
+
+      // Delete user temperature profile
+      const result = await db
+        .delete(userTemperatureProfile)
+        .where(eq(userTemperatureProfile.email, email))
+        .execute();
+
+      if (result.rowCount === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Temperature profile not found for this user.",
+        });
+      }
+
+      return {
+        success: true,
+        message: "User temperature profile deleted successfully",
+      };
+    } catch (error) {
+      console.error("Error deleting user temperature profile:", error);
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          "An unexpected error occurred while deleting the user temperature profile.",
+      });
+    }
+  }),
 });
 
 async function authenticateUser(email: string, password: string) {
