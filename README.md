@@ -1,12 +1,54 @@
 # Eight Sleep Control App
 
-This WebApp is an alternative interface to control any Eight Sleep mattress. It gives the user the ability to schedule the temperature throughout the night without the need for an Eight Sleep subscription. This is achieved by not using Eight Sleep's "Smart Scheduling" feature, but instead running a recurring script every 30 minutes to adjust the temperature based on the schedule.
+This WebApp is an alternative interface to control any Eight Sleep mattress. It gives the user the ability to schedule the temperature throughout the night without the need for an Eight Sleep subscription. This is achieved by not using Eight Sleep's "Smart Scheduling" feature, but instead running a recurring script every 30 minutes to adjust the temperature based on the schedule. If you share your mattress, both of you will be able to login to their accounts and control their side of the mattress.
 
-![Eight Sleep No-Subscription App](eightsleep-nosub-app.png)
+<img src="eightsleep-nosub-app.png" alt="Eight Sleep No-Subscription App" width="500">
 
 ## How to use this app yourself
 
-This WebApp 
+In the following I will explain how to self host this webapp on Vercel so that you can control it from anywhere. The setup will not generate any costs. It should take about 15 minutes to complete, **no coding skills required**.
+
+1. Setup a (free) GitHub Account
+2. Setup a (free) Vercel Account using your GitHub Account as Login Method
+3. On this Github Page, click the "Fork" Button to make a copy of this repository, and follow the steps, rename the project to whatever you want.
+4. Go to your Vercel Dashboard and create a new Project
+5. You are now in the process of creating a new project on Vercel.
+    - In "Import Git Repository" select your forked project
+    - At "Configure Project" select the "Environment Variables" Section and create the two needed Environment Variables (`CRON_SECRET` and `JWT_SECRET`) and set them to a random string of your choice. [E.g. use this site](https://it-tools.tech/token-generator). Safe the **CRON_SECRET**, you will need it in a moment.
+    - Continue and the project will be built. **The first build will fail, which is expected**.
+    - Click "Go to Project"
+6. Change build command
+    - In the project click the "Settings" Tab
+    - In the "General tab under "Build & Development Settings" override the "Build Command" to `npm run build && npm run db:push`
+7. Add database to project
+    - In the project click the "Storage" Tab
+    - Click "Create Database"
+    - Select "Postgres", then "accept", then "create", then "connect" (all defaults are fine in between)
+8. Rebuild project
+    - In the project click the "Deployments" Tab.
+    - Select the 3 dots next to the previously failed build and click "Redeploy"
+9. Test the app
+    - Go to the main "Project" Tab
+    - On the top right click "Visit"
+    - Welcome to your new App! Save the URL, we will need it in a second. Also save it as a bookmark for future use.
+    - Try to login to the app with your Eight Sleep Login. This will work now.
+    - Important: **Setup a Temperature profile now!** or or the next step will fail. You can change it later.
+10. Activate the recurring Update of the Mattress
+    - Go to [cron-job.org](https://cron-job.org/en/) and setup a free account
+    - Create a new "Cron Job"
+    - Title can be anything
+    - URL: `https://YOUR_VERCEL_URL/api/temperatureCron` e.g. `https://eightsleep-nosub-app-efwfwfwf-aerotows-projects.vercel.app/api/temperatureCron`
+    - Set it to every 30 minutes
+    - Unter the "Advanced" Tab add a "Header"
+        - Key: `Authorization`
+        - Value: `Bearer YOUR_CRON_SECRET` (note the space after Bearer, include the word Bearer and the space!)
+    - Click "TEST RUN", then "START TEST RUN" and make sure that the "TEST RUN STATUS" is "200 OK"
+    - Click "Save"
+
+
+Enjoy! Thats it!
+
+
 
 ## Credits
 
