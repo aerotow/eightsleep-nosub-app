@@ -54,7 +54,7 @@ In the following I will explain how to self-host this webapp on Vercel so that y
 In the following will explain how to build a docker image of this app and run it locally. This is useful if you want to run the app on a local server.
 
 1. Clone this repository to your local machine.
-2. Create a copy of the `.env.example` file and create a `.env` file in the root of the project.
+2. Create a copy of the `.env.docker` file and create a `.env` file in the root of the project.
 3. Adjust this file to your needs. You need to set the `CRON_SECRET` and `JWT_SECRET` to a random string of your choice. [E.g. use this site](https://it-tools.tech/token-generator). Safe the **CRON_SECRET**, you will need it in a moment.
 4. You may wish to adjust the port the application is running on in `docker-compose.yml`. Don't change the app port, but you can change the host port as you wish.
 5. Run `docker-compose up -d` to build the docker image and start the app. This will start the following services:
@@ -64,7 +64,7 @@ In the following will explain how to build a docker image of this app and run it
    4. A docker volume to persist the database data between restarts.
 6. The app should now be running on `http://localhost:3000` (or wherever you're running it). You can access it in your browser.
 
-Enjoy! Thats it!
+Enjoy! That's it!
 
 ## Credits
 
