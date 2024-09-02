@@ -6,11 +6,16 @@ This WebApp is an alternative interface to control any Eight Sleep mattress. It 
 
 ## How to use this app yourself
 
-In the following I will explain how to self host this webapp on Vercel so that you can control it from anywhere. The setup will not generate any costs. It should take about 15 minutes to complete, **no coding skills required**.
+There are two methods of running the app:
+  1. **Self Hosting via Vercel**: You can host the app yourself on Vercel. This is the recommended method as it is free, and you have full control over the app.
+  2. **Use a locally hosted version**: You can choose to build a docker image yourself and host it on your own hardware. In the future we may provide a hosted built docker image for convenience.
 
-1. Setup a (free) GitHub Account
-2. Setup a (free) Vercel Account using your GitHub Account as Login Method
-3. On this Github Page, click the "Fork" Button to make a copy of this repository, and follow the steps, rename the project to whatever you want.
+# 1. Self Hosted via Vercel
+In the following I will explain how to self-host this webapp on Vercel so that you can control it from anywhere. The setup will not generate any costs. It should take about 15 minutes to complete, **no coding skills required**.
+
+1. Set up a (free) GitHub Account
+2. Set up a (free) Vercel Account using your GitHub Account as Login Method
+3. On this GitHub Page, click the "Fork" Button to make a copy of this repository, and follow the steps, rename the project to whatever you want.
 4. Go to your Vercel Dashboard and create a new Project
 5. You are now in the process of creating a new project on Vercel.
     - In "Import Git Repository" select your forked project
@@ -32,23 +37,34 @@ In the following I will explain how to self host this webapp on Vercel so that y
     - On the top right click "Visit"
     - Welcome to your new App! Save the URL, we will need it in a second. Also save it as a bookmark for future use.
     - Try to login to the app with your Eight Sleep Login. This will work now.
-    - Important: **Setup a Temperature profile now!** or or the next step will fail. You can change it later.
+    - Important: **Set up a Temperature profile now!** or the next step will fail. You can change it later.
 10. Activate the recurring Update of the Mattress
-    - Go to [cron-job.org](https://cron-job.org/en/) and setup a free account
+    - Go to [cron-job.org](https://cron-job.org/en/) and set up a free account
     - Create a new "Cron Job"
     - Title can be anything
     - URL: `https://YOUR_VERCEL_URL/api/temperatureCron` e.g. `https://eightsleep-nosub-app-efwfwfwf-aerotows-projects.vercel.app/api/temperatureCron`
     - Set it to every 30 minutes
-    - Unter the "Advanced" Tab add a "Header"
+    - Under the "Advanced" Tab add a "Header"
         - Key: `Authorization`
         - Value: `Bearer YOUR_CRON_SECRET` (note the space after Bearer, include the word Bearer and the space!)
     - Click "TEST RUN", then "START TEST RUN" and make sure that the "TEST RUN STATUS" is "200 OK"
     - Click "Save"
 
+# 2. Docker Hosted
+In the following will explain how to build a docker image of this app and run it locally. This is useful if you want to run the app on a local server.
+
+1. Clone this repository to your local machine.
+2. Create a copy of the `.env.example` file and create a `.env` file in the root of the project.
+3. Adjust this file to your needs. You need to set the `CRON_SECRET` and `JWT_SECRET` to a random string of your choice. [E.g. use this site](https://it-tools.tech/token-generator). Safe the **CRON_SECRET**, you will need it in a moment.
+4. You may wish to adjust the port the application is running on in `docker-compose.yml`. Don't change the app port, but you can change the host port as you wish.
+5. Run `docker-compose up -d` to build the docker image and start the app. This will start the following services:
+   1. The app itself.
+   2. A postgres database using the values supplied in `.env` to initialize the database.
+   3. A docker network to connect the services.
+   4. A docker volume to persist the database data between restarts.
+6. The app should now be running on `http://localhost:3000` (or wherever you're running it). You can access it in your browser.
 
 Enjoy! Thats it!
-
-
 
 ## Credits
 
