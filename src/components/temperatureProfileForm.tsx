@@ -104,11 +104,10 @@ export const TemperatureProfileForm: React.FC = () => {
     apiR.user.updateUserTemperatureProfile.useMutation({
       onSuccess: () => {
         console.log("Temperature profile updated successfully");
-        // Handle success (e.g., show success message, update UI)
+        setIsExistingProfile(true); // Update the state after successful creation/update
       },
       onError: (error) => {
         console.error("Failed to update temperature profile:", error.message);
-        // Handle error (e.g., show error message)
       },
     });
 
@@ -121,7 +120,6 @@ export const TemperatureProfileForm: React.FC = () => {
       },
       onError: (error) => {
         console.error("Failed to delete temperature profile:", error.message);
-        // Handle error (e.g., show error message)
       },
     });
 
