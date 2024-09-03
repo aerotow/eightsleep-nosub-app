@@ -6,10 +6,9 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - db-proxy
     env_file:
       - .env
-    networks:
-      - default
   db:
     container_name: es-db
     image: postgres:16.4
@@ -21,14 +20,14 @@ services:
     # If you initially run the database without this file, you will need to remove the volume to reset the password.
     env_file:
       - .env
-    networks:
-      - default
-  pg_proxy:
+  db-proxy:
     image: ghcr.io/neondatabase/wsproxy:latest
+    container_name: es-db-proxy
     environment:
       APPEND_PORT: "db:5432"
       ALLOW_ADDR_REGEX: ".*"
       LOG_TRAFFIC: "true"
+      LOG_CONN_INFO: "true"
     ports:
       - "54321:80"
     depends_on:
@@ -36,6 +35,3 @@ services:
 
 volumes:
   es-pgdata:
-networks:
-  default:
-    external: false
