@@ -15,7 +15,6 @@ const temperatureProfileSchema = z.object({
   finalSleepLevel: z.number().min(-10).max(10),
   timezone: z.object({
     value: z.string(),
-    label: z.string(),
     altName: z.string().optional(),
     abbrev: z.string().optional(),
   }),
@@ -43,7 +42,7 @@ export const TemperatureProfileForm: React.FC = () => {
       initialSleepLevel: 0,
       midStageSleepLevel: 0,
       finalSleepLevel: 0,
-      timezone: { value: "America/New_York", label: "America/New_York" },
+      timezone: { value: "America/New_York"},
     },
   });
 
@@ -57,6 +56,7 @@ export const TemperatureProfileForm: React.FC = () => {
   });
 
   const getUserTemperatureProfileQuery = apiR.user.getUserTemperatureProfile.useQuery();
+  
 
   useEffect(() => {
     if (getUserTemperatureProfileQuery.isSuccess) {
@@ -66,7 +66,7 @@ export const TemperatureProfileForm: React.FC = () => {
       setValue("initialSleepLevel", profile.initialSleepLevel / 10);
       setValue("midStageSleepLevel", profile.midStageSleepLevel / 10);
       setValue("finalSleepLevel", profile.finalSleepLevel / 10);
-      setValue("timezone", { value: profile.timezoneTZ, label: profile.timezoneTZ });
+      setValue("timezone", { value: profile.timezoneTZ });
       setIsExistingProfile(true);
       setIsLoading(false);
     } else if (getUserTemperatureProfileQuery.isError) {
