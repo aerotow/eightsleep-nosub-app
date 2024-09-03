@@ -50,6 +50,10 @@ In the following I will explain how to self host this webapp on Vercel so that y
 
 Enjoy! Thats it!
 
+## How to Upgrade from an older Version?
+
+Check the [Release Notes](https://github.com/aerotow/eightsleep-nosub-app/releases) to see that changed. I will include steps you have to do there to upgrade. After you have read the notes there and made potential changes, make sure to go to your github fork and sync to the latest commit of this repository. Its just one click at the top.
+
 
 
 ## Credits

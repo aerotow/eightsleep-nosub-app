@@ -25,6 +25,7 @@ type TemperatureProfileForm = z.infer<typeof temperatureProfileSchema>;
 export const TemperatureProfileForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isExistingProfile, setIsExistingProfile] = useState(false);
+  const [sleepDurationError, setSleepDurationError] = useState<string | null>(null);
 
   const {
     register,
@@ -89,14 +90,21 @@ export const TemperatureProfileForm: React.FC = () => {
       const hours = Math.floor(durationMs / (1000 * 60 * 60));
       const minutes = Math.round((durationMs % (1000 * 60 * 60)) / (1000 * 60));
 
-      const midStageDate = new Date(bedDate.getTime() + 60 * 60 * 1000); // 1 hour after bedtime
-      const finalStageDate = new Date(wakeDate.getTime() - 2 * 60 * 60 * 1000); // 2 hours before wakeup
+      // Check if sleep duration is less than 4 hours
+      if (hours < 4 ) {
+        setSleepDurationError("Sleep duration must be at least 4 hours.");
+        setSleepInfo({ duration: "", midStageTime: "", finalStageTime: "" });
+      } else {
+        setSleepDurationError(null);
+        const midStageDate = new Date(bedDate.getTime() + 60 * 60 * 1000); // 1 hour after bedtime
+        const finalStageDate = new Date(wakeDate.getTime() - 2 * 60 * 60 * 1000); // 2 hours before wakeup
 
-      setSleepInfo({
-        duration: `${hours} hours ${minutes} minutes`,
-        midStageTime: midStageDate.toTimeString().slice(0, 5),
-        finalStageTime: finalStageDate.toTimeString().slice(0, 5),
-      });
+        setSleepInfo({
+          duration: `${hours} hours ${minutes} minutes`,
+          midStageTime: midStageDate.toTimeString().slice(0, 5),
+          finalStageTime: finalStageDate.toTimeString().slice(0, 5),
+        });
+      }
     }
   }, [bedTime, wakeupTime]);
 
@@ -124,6 +132,10 @@ export const TemperatureProfileForm: React.FC = () => {
     });
 
   const onSubmit = (data: TemperatureProfileForm) => {
+    if (sleepDurationError) {
+      return; // Prevent submission if there's a sleep duration error
+    }
+
     const formatTimeForAPI = (time: string) => `${time}:00.000000`;
 
     const mutationData = {
@@ -263,11 +275,15 @@ export const TemperatureProfileForm: React.FC = () => {
         </div>
 
         <div className="rounded-md bg-blue-50 p-4">
-          <p className="text-sm text-blue-800">
-            Sleep Duration: {sleepInfo.duration}
-            <br />
-            Bed will prepare for sleep one hour before the bed time.
-          </p>
+          {sleepDurationError ? (
+            <p className="text-sm text-red-600">{sleepDurationError}</p>
+          ) : (
+            <p className="text-sm text-blue-800">
+              Sleep Duration: {sleepInfo.duration}
+              <br />
+              Bed will prepare for sleep one hour before the bed time.
+            </p>
+          )}
         </div>
 
         <SliderInput
@@ -293,7 +309,7 @@ export const TemperatureProfileForm: React.FC = () => {
           <Button
             type="submit"
             className="flex-grow rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            disabled={updateProfileMutation.isPending}
+            disabled={updateProfileMutation.isPending || !!sleepDurationError}
           >
             {updateProfileMutation.isPending ? "Updating..." : (isExistingProfile ? "Update" : "Create") + " Profile"}
           </Button>
