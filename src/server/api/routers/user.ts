@@ -22,8 +22,8 @@ class DatabaseError extends Error {
 }
 
 const checkAuthCookie = async (headers: Headers) => {
+
   const cookies = headers.get("cookie");
-  console.log("Checking cookies");
   if (!cookies) {
     throw new AuthError(`Auth request failed. No cookies found.`, 401);
   }
@@ -32,7 +32,6 @@ const checkAuthCookie = async (headers: Headers) => {
     .split("; ")
     .find((row) => row.startsWith("8slpAutht="))
     ?.split("=")[1];
-  console.log("Token:", token);
 
   if (!token) {
     throw new AuthError(`Auth request failed. No cookies found.`, 401);
@@ -54,8 +53,10 @@ export const userRouter = createTRPCRouter({
         if (error instanceof AuthError) {
           return { loginRequired: true };
         }
+
         throw error;
       }
+
       const email = decoded.email;
 
       const userList = await db
@@ -116,6 +117,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
+
       try {
         const authResult = await authenticateUser(input.email, input.password);
 
@@ -138,7 +140,6 @@ export const userRouter = createTRPCRouter({
           maxAge: threeMonthsInSeconds,
           path: "/",
         });
-        console.log("Saving token to cookie.");
 
         // Set HTTP-only cookie
         return {
