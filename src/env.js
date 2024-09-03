@@ -13,6 +13,7 @@ export const env = createEnv({
       .default("development"),
       CRON_SECRET: z.string().min(1),
       JWT_SECRET: z.string().min(1),
+      APPROVED_EMAILS: z.string().min(1),
   },
 
   /**
@@ -33,6 +34,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     CRON_SECRET: process.env.CRON_SECRET,
     JWT_SECRET: process.env.JWT_SECRET,
+    APPROVED_EMAILS: process.env.APPROVED_EMAILS,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

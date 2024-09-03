@@ -14,7 +14,8 @@ In the following I will explain how to self host this webapp on Vercel so that y
 4. Go to your Vercel Dashboard and create a new Project
 5. You are now in the process of creating a new project on Vercel.
     - In "Import Git Repository" select your forked project
-    - At "Configure Project" select the "Environment Variables" Section and create the two needed Environment Variables (`CRON_SECRET` and `JWT_SECRET`) and set them to a random string of your choice. [E.g. use this site](https://it-tools.tech/token-generator). Safe the **CRON_SECRET**, you will need it in a moment.
+    - At "Configure Project" select the "Environment Variables" Section and create the three needed Environment Variables (`CRON_SECRET`, `JWT_SECRET`, `APPROVED_EMAILS`) and set the two Secrets to a random string of your choice. [E.g. use this site](https://it-tools.tech/token-generator). Safe the **CRON_SECRET**, you will need it in a moment. 
+    - Set APPROVED_EMAILS to a comma separated list of emails that are allowed to login to the app. This is so that noone except you (and potentially your partner) can login to the app.
     - Continue and the project will be built. **The first build will fail, which is expected**.
     - Click "Go to Project"
 6. Two more settings in vercel

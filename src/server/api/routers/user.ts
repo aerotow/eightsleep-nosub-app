@@ -119,6 +119,12 @@ export const userRouter = createTRPCRouter({
       try {
         const authResult = await authenticateUser(input.email, input.password);
 
+        const approvedEmails = process.env.APPROVED_EMAILS!.split(",");
+
+        if (!approvedEmails.includes(input.email)) {
+          throw new AuthError("Email not approved");
+        }
+
         await saveUserToDatabase(input.email, authResult);
 
         const jwtSecret = process.env.JWT_SECRET;
