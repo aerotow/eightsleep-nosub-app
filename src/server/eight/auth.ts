@@ -54,7 +54,7 @@ export async function authenticate(email: string, password: string): Promise<Tok
   try {
     const tokenResponse = await makeAuthRequest(data);
     if (!tokenResponse.userId) {
-      throw new AuthError("Authentication response from eightsleep API should always have a userId when loggin in with credetials");
+      throw new AuthError("Authentication response from EightSleep API should always have a userId when logging in with credentials");
     }
     return {
       eightAccessToken: tokenResponse.access_token,

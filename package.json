@@ -1,6 +1,6 @@
 {
   "name": "8",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -47,7 +47,7 @@
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
-    "drizzle-kit": "^0.24.0",
+    "drizzle-kit": "^0.24.2",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
     "eslint-plugin-drizzle": "^0.2.3",

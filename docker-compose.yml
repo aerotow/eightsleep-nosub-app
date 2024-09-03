@@ -1,0 +1,31 @@
+services:
+  app:
+    container_name: es-app
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    networks:
+      - default
+  db:
+    container_name: es-db
+    image: postgres:16.4
+    ports:
+      - "5432:5432"
+    volumes:
+      - es-pgdata:/var/lib/postgresql/data
+    # Contains POSTGRES_PASSWORD required to initialize the database
+    # If you initially run the database without this file, you will need to remove the volume to reset the password.
+    env_file:
+      - .env
+    networks:
+      - default
+
+volumes:
+  es-pgdata:
+networks:
+  default:
+    external: false
