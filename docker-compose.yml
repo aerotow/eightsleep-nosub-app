@@ -23,6 +23,16 @@ services:
       - .env
     networks:
       - default
+  pg_proxy:
+    image: ghcr.io/neondatabase/wsproxy:latest
+    environment:
+      APPEND_PORT: "db:5432"
+      ALLOW_ADDR_REGEX: ".*"
+      LOG_TRAFFIC: "true"
+    ports:
+      - "54321:80"
+    depends_on:
+      - db
 
 volumes:
   es-pgdata:

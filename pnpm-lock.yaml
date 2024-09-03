@@ -81,6 +81,9 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@neondatabase/serverless':
+        specifier: ^0.9.4
+        version: 0.9.4
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.12

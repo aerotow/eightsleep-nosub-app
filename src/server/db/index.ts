@@ -1,22 +1,15 @@
-import { drizzle as vercelDrizzle } from 'drizzle-orm/vercel-postgres';
-import { drizzle as postgresDrizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from "@vercel/postgres";
 
 import * as schema from "./schema";
-import postgres from "postgres";
-
-let client;
+import {neonConfig} from "@neondatabase/serverless";
 
 // Swap to use Postgres driver if not in Vercel mode
 if (process.env.LOCAL_DB) {
-  console.log('Using Docker')
-  console.log(process.env.POSTGRES_URL)
-  const psql = postgres(String(process.env.POSTGRES_URL), {
-    idle_timeout: 10000,
-  });
-  client = postgresDrizzle(psql, { schema })
-} else {
-  client = vercelDrizzle(sql, { schema })
+  neonConfig.wsProxy = (host) => `${host}:54321/v1`;
+  neonConfig.useSecureWebSocket = false;
+  neonConfig.pipelineTLS = false;
+  neonConfig.pipelineConnect = false;
 }
 
-export const db = client
+export const db = drizzle(sql, { schema })

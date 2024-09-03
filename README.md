@@ -50,7 +50,8 @@ In the following I will explain how to self-host this webapp on Vercel so that y
     - Click "TEST RUN", then "START TEST RUN" and make sure that the "TEST RUN STATUS" is "200 OK"
     - Click "Save"
 
-# 2. Docker Hosted
+# 2. Docker 
+\#TODO FINISH OFF
 In the following will explain how to build a docker image of this app and run it locally. This is useful if you want to run the app on a local server.
 
 1. Clone this repository to your local machine.
