@@ -138,6 +138,7 @@ export const userRouter = createTRPCRouter({
           maxAge: threeMonthsInSeconds,
           path: "/",
         });
+        console.log("Saving token to cookie.");
 
         // Set HTTP-only cookie
         return {
