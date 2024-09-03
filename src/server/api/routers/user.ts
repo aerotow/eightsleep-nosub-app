@@ -119,9 +119,9 @@ export const userRouter = createTRPCRouter({
       try {
         const authResult = await authenticateUser(input.email, input.password);
 
-        const approvedEmails = process.env.APPROVED_EMAILS!.split(",");
+        const approvedEmails = process.env.APPROVED_EMAILS!.split(",").map(email => email.toLowerCase());
 
-        if (!approvedEmails.includes(input.email)) {
+        if (!approvedEmails.includes(input.email.toLowerCase())) {
           throw new AuthError("Email not approved");
         }
 
