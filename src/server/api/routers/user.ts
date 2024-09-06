@@ -37,9 +37,14 @@ const checkAuthCookie = async (headers: Headers) => {
   if (!token) {
     throw new AuthError(`Auth request failed. No cookies found.`, 401);
   }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-    email: string;
-  };
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      email: string;
+    };
+  } catch {
+    throw new AuthError(`Auth request failed. Invalid token.`, 401);
+  }
 
   return decoded;
 };
