@@ -20,7 +20,7 @@ In the following, I will explain how to self-host this webapp on Vercel so that 
     - Click "Go to Project"
 6. Two more settings in Vercel
     - In the project, click the "Settings" Tab
-    - In the "General" tab under "Build & Development Settings" override the "Build Command" to `npm run build && npm run db:push`
+    - In the "General" tab under "Build & Development Settings" override the "Build Command" to `npm run build && npm run db:push` and **press the save button**.
     - In the "Deployment Protection" Tab, disable "Vercel Authentication" at the very top.
 7. Add database to project
     - In the project, click the "Storage" Tab
