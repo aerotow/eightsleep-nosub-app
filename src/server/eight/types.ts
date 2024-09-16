@@ -57,7 +57,7 @@ export const UserProfileSchema = z.object({
                   enabledSince: z.string(),
           }).optional(),
           features: z.array(
-                  z.enum(["warming", "cooling", "vibration", "tapControls"]),
+                  z.enum(["warming", "cooling", "vibration", "tapControls", "alarms"]),
           ).optional(),
           currentDevice: z.object({
                   id: z.string(),
