@@ -1,5 +1,7 @@
 # Eight Sleep Control App
 
+> **A newer version of this project exists:** [Pod Hub](https://github.com/PodHub-Online/pod-hub), built on this project and grown into a full phone app with a 3D bed, per-side schedules, sleep history and WHOOP. It's open source (GPL v3). Demo: [podhub.online](https://www.podhub.online)
+
 This WebApp is an alternative interface to control any Eight Sleep mattress. It gives the user the ability to schedule the temperature throughout the night without the need for an Eight Sleep subscription. This is achieved by not using Eight Sleep's "Smart Scheduling" feature, but instead running a recurring script every 30 minutes to adjust the temperature based on the schedule. If you share your mattress, both of you will be able to log in to your accounts and control your side of the mattress.
 
 <img src="eightsleep-nosub-app.png" alt="Eight Sleep No-Subscription App" width="500">
