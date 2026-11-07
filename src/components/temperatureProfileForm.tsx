@@ -6,13 +6,14 @@ import { z } from "zod";
 import { apiR } from "~/trpc/react";
 import TimezoneSelect, { allTimezones } from "react-timezone-select";
 import { Button } from "./ui/button";
+import { celsiusToRaw, rawToCelsius, MIN_CELSIUS, MAX_CELSIUS } from "~/lib/temperature";
 
 const temperatureProfileSchema = z.object({
   bedTime: z.string().regex(/^\d{2}:\d{2}$/, "Must be in HH:MM format"),
   wakeupTime: z.string().regex(/^\d{2}:\d{2}$/, "Must be in HH:MM format"),
-  initialSleepLevel: z.number().min(-10).max(10),
-  midStageSleepLevel: z.number().min(-10).max(10),
-  finalSleepLevel: z.number().min(-10).max(10),
+  initialSleepLevel: z.number().min(MIN_CELSIUS).max(MAX_CELSIUS),
+  midStageSleepLevel: z.number().min(MIN_CELSIUS).max(MAX_CELSIUS),
+  finalSleepLevel: z.number().min(MIN_CELSIUS).max(MAX_CELSIUS),
   timezone: z.object({
     value: z.string(),
     altName: z.string().optional(),
@@ -40,9 +41,9 @@ export const TemperatureProfileForm: React.FC = () => {
     defaultValues: {
       bedTime: "22:00",
       wakeupTime: "06:00",
-      initialSleepLevel: 0,
-      midStageSleepLevel: 0,
-      finalSleepLevel: 0,
+      initialSleepLevel: 27,
+      midStageSleepLevel: 27,
+      finalSleepLevel: 27,
       timezone: { value: "America/New_York"},
     },
   });
@@ -64,9 +65,9 @@ export const TemperatureProfileForm: React.FC = () => {
       const profile = getUserTemperatureProfileQuery.data;
       setValue("bedTime", profile.bedTime.slice(0, 5));
       setValue("wakeupTime", profile.wakeupTime.slice(0, 5));
-      setValue("initialSleepLevel", profile.initialSleepLevel / 10);
-      setValue("midStageSleepLevel", profile.midStageSleepLevel / 10);
-      setValue("finalSleepLevel", profile.finalSleepLevel / 10);
+      setValue("initialSleepLevel", rawToCelsius(profile.initialSleepLevel));
+      setValue("midStageSleepLevel", rawToCelsius(profile.midStageSleepLevel));
+      setValue("finalSleepLevel", rawToCelsius(profile.finalSleepLevel));
       setValue("timezone", { value: profile.timezoneTZ });
       setIsExistingProfile(true);
       setIsLoading(false);
@@ -141,9 +142,9 @@ export const TemperatureProfileForm: React.FC = () => {
     const mutationData = {
       bedTime: formatTimeForAPI(data.bedTime),
       wakeupTime: formatTimeForAPI(data.wakeupTime),
-      initialSleepLevel: Math.round(data.initialSleepLevel * 10),
-      midStageSleepLevel: Math.round(data.midStageSleepLevel * 10),
-      finalSleepLevel: Math.round(data.finalSleepLevel * 10),
+      initialSleepLevel: celsiusToRaw(data.initialSleepLevel),
+      midStageSleepLevel: celsiusToRaw(data.midStageSleepLevel),
+      finalSleepLevel: celsiusToRaw(data.finalSleepLevel),
       timezoneTZ: data.timezone.value,
     };
 
@@ -175,14 +176,14 @@ export const TemperatureProfileForm: React.FC = () => {
           <div className="flex items-center">
             <input
               type="range"
-              min="-10"
-              max="10"
+              min={MIN_CELSIUS}
+              max={MAX_CELSIUS}
               step="1"
               value={value}
               onChange={(e) => onChange(Number(e.target.value))}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
             />
-            <span className="ml-2 text-sm text-gray-600">{value}</span>
+            <span className="ml-2 w-12 text-right text-sm text-gray-600">{value}°C</span>
           </div>
         )}
       />
@@ -288,19 +289,19 @@ export const TemperatureProfileForm: React.FC = () => {
 
         <SliderInput
           name="initialSleepLevel"
-          label="Initial Sleep Level"
+          label="Initial Sleep Temperature"
           control={control}
           info={`Starts at ${bedTime}`}
         />
         <SliderInput
           name="midStageSleepLevel"
-          label="Mid-Stage Sleep Level"
+          label="Mid-Stage Sleep Temperature"
           control={control}
           info={`Starts at ${sleepInfo.midStageTime}`}
         />
         <SliderInput
           name="finalSleepLevel"
-          label="Final Sleep Level"
+          label="Final Sleep Temperature"
           control={control}
           info={`Starts at ${sleepInfo.finalStageTime}`}
         />
